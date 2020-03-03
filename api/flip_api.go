@@ -14,6 +14,7 @@ import (
 	"github.com/ipfs/go-cid"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
+	"math/rand"
 )
 
 type FlipApi struct {
@@ -274,6 +275,20 @@ func (api *FlipApi) Words(hash string) (FlipWordsResponse, error) {
 	return FlipWordsResponse{
 		Words: [2]int{w1, w2},
 	}, err
+}
+
+func (api *FlipApi) Generate(size int) FlipResponse {
+	log.Info("generate request", "size", size)
+	defer log.Info("test response", "size", size)
+	flip := make([]byte, size)
+	rand.Read(flip)
+
+	idx := rand.Intn(len(flip))
+
+	return FlipResponse{
+		Hex:        flip[:idx],
+		PrivateHex: flip[idx:],
+	}
 }
 
 func prepareAnswers(answers []FlipAnswer, flips [][]byte) *types.Answers {
